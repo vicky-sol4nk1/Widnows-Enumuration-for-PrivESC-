@@ -439,6 +439,8 @@ net use \\server /user:admin password123
 
 👉 That’s instant lateral movement opportunity.
 
+pass the hash if the smb is open
+<img width="1315" height="393" alt="image" src="https://github.com/user-attachments/assets/d3b0c762-5576-4ea4-a78a-91f629bd1796" />
 
 
 

